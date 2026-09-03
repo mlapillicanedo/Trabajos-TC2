@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Sep  3 13:16:16 2026
+
+@author: mariano
+"""
+
+import sympy as sp
+import numpy as np
+import scipy.signal as sig
+from scipy.signal.windows import hamming, kaiser, blackmanharris
+import matplotlib.pyplot as plt
+
+from pytc2.sistemas_lineales import plot_plantilla, group_delay
+
+
+# frecuencia de muestreo normalizada
+fs = 2.0
+# tamaño de la respuesta al impulso
+cant_coef = 27
+
+filter_type = 'lowpass'
+
+fpass = 0.25 # 
+ripple = 0.5 # dB
+fstop = 0.6 # Hz
+attenuation = 40 # dB
+
+# construyo la plantilla de requerimientos
+frecs = [0.0,  fpass,     fstop,          1.0]
+gains = [0,   -ripple, -attenuation,   -np.inf] # dB
+
+gains = 10**(np.array(gains)/20)
+
+# algunas ventanas para evaluar
+#win_name = 'boxcar'
+#win_name = 
+win_name = kaiser
+#win_name = 'flattop'
+
+# FIR design
+num_bh = sig.firwin2(cant_coef, frecs, gains , window='blackmanharris' )
+num_hm = sig.firwin2(cant_coef, frecs, gains , window='hamming' )
+num_ka = sig.firwin2(cant_coef, frecs, gains , window=('kaiser',14))
+den = 1.0
